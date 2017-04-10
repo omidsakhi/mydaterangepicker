@@ -57,6 +57,36 @@ export class MyDateRangePicker implements OnChanges, ControlValueAccessor {
     @Output() inputFocusBlur: EventEmitter<IMyInputFocusBlur> = new EventEmitter<IMyInputFocusBlur>();
     @Output() dateSelected: EventEmitter<IMyDateSelected> = new EventEmitter<IMyDateSelected>();
 
+    private fullmonths: any = {
+        1: "January",
+        2: "February",
+        3: "March",
+        4: "April",
+        5: "May",
+        6: "June",
+        7: "July",
+        8: "August",
+        9: "September",
+        10: "October",
+        11: "November",
+        12: "December"
+    };
+
+    private custommonths: any = {
+        1: "Jan",
+        2: "Feb",
+        3: "Mar",
+        4: "Apr",
+        5: "May",
+        6: "Jun",
+        7: "Jul",
+        8: "Aug",
+        9: "Sep",
+        10: "Oct",
+        11: "Nov",
+        12: "Dec"
+    };
+
     onChangeCb: (_: any) => void = () => { };
     onTouchedCb: () => void = () => { };
 
@@ -590,8 +620,30 @@ export class MyDateRangePicker implements OnChanges, ControlValueAccessor {
 
     formatDate(val: any): string {
         // Returns formatted date string, if mmm is part of dateFormat returns month as a string
-        let formatted: string = this.opts.dateFormat.replace("yyyy", val.year).replace("dd", this.preZero(val.day));
-        return this.opts.dateFormat.indexOf("mmm") !== -1 ? formatted.replace("mmm", this.monthText(val.month)) : formatted.replace("mm", this.preZero(val.month));
+        let formatted: string = this.opts.dateFormat.toLowerCase();
+        let yearstring: string;
+        if (formatted.indexOf("yyyy") > -1) {
+            yearstring = "" + val.year;
+        } else if (formatted.indexOf("yy") > -1) {
+            yearstring = ("" + val.year).substr(2, 3);
+        }
+        let datestring: string;
+        if (formatted.indexOf("dd") > -1) {
+            datestring = ("0" + val.day).slice(-2);
+        } else if (formatted.indexOf("d") > -1) {
+            datestring = "" + val.day;
+        }
+        let monthstring: string;
+        if (formatted.indexOf("mmmm") > -1) {
+            monthstring = this.fullmonths[val.month];
+        } else if (formatted.indexOf("mmm") > -1) {
+            monthstring = this.custommonths[val.month];
+        } else if (formatted.indexOf("mm") > -1) {
+            monthstring = ("0" + val.month).slice(-2);
+        } else if (formatted.indexOf("m") > -1) {
+            monthstring = val.month;
+        }
+        return formatted.replace(/(y+|Y+)/g, yearstring).replace(/(m+|M+)/g, monthstring).replace(/(d+|D+)/g, datestring);
     }
 
     monthText(m: number): string {

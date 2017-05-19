@@ -1,13 +1,15 @@
 # mydaterangepicker
 
-**Angular 2 date range picker - Angular2 reusable UI component**
+**Angular date range picker**
 
 [![Build Status](https://travis-ci.org/kekeh/mydaterangepicker.svg?branch=master)](https://travis-ci.org/kekeh/mydaterangepicker)
 [![codecov](https://codecov.io/gh/kekeh/mydaterangepicker/branch/master/graph/badge.svg)](https://codecov.io/gh/kekeh/mydaterangepicker)
 [![npm](https://img.shields.io/npm/v/mydaterangepicker.svg?maxAge=2592000?style=flat-square)](https://www.npmjs.com/package/mydaterangepicker)
 
 ## Description
-Highly configurable Angular2 date range picker. Online demo is [here](http://kekeh.github.io/mydaterangepicker)
+Highly configurable Angular date range picker. Compatible with __Angular2__ and __Angular4__ versions.
+
+Online demo is [here](http://kekeh.github.io/mydaterangepicker)
 
 ## Installation
 
@@ -59,12 +61,12 @@ is an example application. It shows how to use the __ngModel__.
 To use ngModel define the application class as follows:
 
 ```ts
-import {IMyOptions} from 'mydaterangepicker';
+import {IMyDrpOptions} from 'mydaterangepicker';
 // other imports here...
 
 export class MyTestApp {
 
-    private myDateRangePickerOptions: IMyOptions = {
+    private myDateRangePickerOptions: IMyDrpOptions = {
         // other options...
         dateFormat: 'dd.mm.yyyy',
     };
@@ -95,12 +97,12 @@ is an example application. It shows how to use the __formControlName__.
 To use reactive forms define the application class as follows:
 
 ```ts
-import {IMyOptions} from 'mydaterangepicker';
+import {IMyDrpOptions} from 'mydaterangepicker';
 // other imports here...
 
 export class MyTestApp implements OnInit {
 
-    private myDateRangePickerOptions: IMyOptions = {
+    private myDateRangePickerOptions: IMyDrpOptions = {
         // other options...
         dateFormat: 'dd.mm.yyyy',
     };
@@ -163,12 +165,12 @@ is an example application. It shows how to use callbacks.
 To use callbacks define the application class as follows:
 
 ```js
-import {IMyOptions, IMyDateRangeModel} from 'mydaterangepicker';
+import {IMyDrpOptions, IMyDateRangeModel} from 'mydaterangepicker';
 // other imports here...
 
 export class MyTestApp {
 
-    private myDateRangePickerOptions: IMyOptions = {
+    private myDateRangePickerOptions: IMyDrpOptions = {
         // other options...
         dateFormat: 'dd.mm.yyyy',
     };
@@ -196,7 +198,7 @@ Add the following snippet inside your template:
 
 ### options attribute
 
-Value of the __options__ attribute is a type of [IMyOptions](https://github.com/kekeh/mydaterangepicker/blob/master/src/my-date-range-picker/interfaces/my-options.interface.ts). It can contain the following properties.
+Value of the __options__ attribute is a type of [IMyDrpOptions](https://github.com/kekeh/mydaterangepicker/blob/master/src/my-date-range-picker/interfaces/my-options.interface.ts). It can contain the following properties.
 
 | Option        | Default       | Type  | Description  |
 | ------------- | ------------- | ----- | ------------ |
@@ -211,37 +213,47 @@ Value of the __options__ attribute is a type of [IMyOptions](https://github.com/
 | __firstDayOfWeek__   | mo | string | First day of week on calendar. One of the following: mo, tu, we, th, fr, sa, su |
 | __sunHighlight__   | true | boolean | Sunday red colored on calendar. |
 | __markCurrentDay__   | true | boolean | Is current day (today) marked on calendar. |
-| __editableMonthAndYear__  | true | boolean | Is month and year labels editable or not. |
-| __minYear__   | 1000 | number | Minimum allowed year in calendar. Cannot be less than 1000. |
-| __maxYear__   | 9999 | number | Maximum allowed year in calendar. Cannot be more than 9999. |
-| __disableUntil__   | no default value | [IMyDate](https://github.com/kekeh/mydaterangepicker/blob/master/src/my-date-range-picker/interfaces/my-date.interface.ts) | Disable dates backward starting from the given date. For example: {year: 2016, month: 6, day: 26} |
-| __disableSince__   | no default value | [IMyDate](https://github.com/kekeh/mydaterangepicker/blob/master/src/my-date-range-picker/interfaces/my-date.interface.ts) | Disable dates forward starting from the given date. For example: {year: 2016, month: 7, day: 22} |
-| __disableDates__   | no default value  | Array<[IMyDate](https://github.com/kekeh/mydaterangepicker/blob/master/src/my-date-range-picker/interfaces/my-date.interface.ts)> | Disable single dates one by one. The disabled date cannot be selected but it can be in a range. For example: [{year: 2016, month: 11, day: 14}, {year: 2016, month: 1, day: 15}] |
-| __disableDateRanges__  | no default value  | Array<[IMyDateRange](https://github.com/kekeh/mydaterangepicker/blob/master/src/my-date-range-picker/interfaces/my-date-range.interface.ts)> | Disable date ranges one by one. The disabled date cannot be selected but it can be in a range. For example: [{beginDate: {year: 2016, month: 11, day: 14}, endDate: {year: 2016, month: 11, day: 20}}] |
+| __monthSelector__  | true | boolean | If month label is selected opens a selector of months. |
+| __yearSelector__  | true | boolean | If year label is selected opens a selector of years. |
+| __minYear__   | 1100 | number | Minimum allowed year in calendar. Cannot be less than 1100. |
+| __maxYear__   | 9100 | number | Maximum allowed year in calendar. Cannot be more than 9100. |
+| __disableUntil__   | no default value | [IMyDate](https://github.com/kekeh/mydaterangepicker/blob/master/src/my-date-range-picker/interfaces/my-date.interface.ts) | Disable dates backward starting from the given date. For example: {year: 2016, month: 6, day: 26}. To reset existing disableUntil value set: {year: 0, month: 0, day: 0} |
+| __disableSince__   | no default value | [IMyDate](https://github.com/kekeh/mydaterangepicker/blob/master/src/my-date-range-picker/interfaces/my-date.interface.ts) | Disable dates forward starting from the given date. For example: {year: 2016, month: 7, day: 22}. To reset existing disableSince value set: {year: 0, month: 0, day: 0} |
+| __disableDates__   | no default value  | Array<[IMyDate](https://github.com/kekeh/mydaterangepicker/blob/master/src/my-date-range-picker/interfaces/my-date.interface.ts)> | Disable single dates one by one. The disabled date cannot be selected but it can be in a range. For example: [{year: 2016, month: 11, day: 14}, {year: 2016, month: 1, day: 15}]. To reset existing disableDates value set empty array to it. |
+| __enableDates__   | no default value  | Array<[IMyDate](https://github.com/kekeh/mydaterangepicker/blob/master/src/my-date-range-picker/interfaces/my-date.interface.ts)> | Enable given dates one by one if the date is disabled. For example if you disable the date range and want to enable some dates in range. Array of enabled days. For example: [{year: 2016, month: 11, day: 14}, {year: 2016, month: 1, day: 15}]. To reset existing enableDates value set empty array to it. |
+| __disableDateRanges__  | no default value  | Array<[IMyDateRange](https://github.com/kekeh/mydaterangepicker/blob/master/src/my-date-range-picker/interfaces/my-date-range.interface.ts)> | Disable date ranges one by one. The disabled date cannot be selected but it can be in a range. For example: [{beginDate: {year: 2016, month: 11, day: 14}, endDate: {year: 2016, month: 11, day: 20}}]. To reset existing disableDateRanges value set empty array to it. |
 | __disableHeaderButtons__   | true | boolean | Prevent to change the calendar view with header buttons if previous or next month are fully disabled by disableUntil or disableSince. |
 | __showWeekNumbers__   | false | boolean | Are week numbers visible or not on calendar. Can be used if __firstDayOfWeek = mo__. |
+| __selectorHeight__   | 232px | string | Selector height. |
+| __selectorWidth__   | 252px | string | Selector width. |
 | __inline__   | false | boolean | Show mydaterangepicker in inline mode. |
 | __showClearDateRangeBtn__   | true | boolean | Is clear date range button shown or not. Can be used if __inline = false__. |
 | __height__   | 34px | string | mydatepicker height without selector. Can be used if __inline = false__. |
 | __width__   | 100% | string | mydatepicker width. Can be used if __inline = false__. |
-| __selectionTxtFontSize__   | 18px | string | Selection area font size. Can be used if __inline = false__. |
+| __selectionTxtFontSize__   | 14px | string | Selection area font size. Can be used if __inline = false__. |
 | __alignSelectorRight__   | false | boolean | Align selector right. Can be used if __inline = false__. |
 | __indicateInvalidDateRange__   | true | boolean | If user typed date range is not same format as __dateFormat__, show red background in the selection area. Can be used if __inline = false__. |
 | __componentDisabled__   | false | boolean | Is selection area input field and buttons disabled or not (input disabled flag). Can be used if __inline = false__. |
 | __editableDateRangeField__   | true | boolean | Is selection area input field editable or not (input readonly flag). Can be used if __inline = false__. |
 | __showSelectorArrow__   | true | boolean | Is selector (calendar) arrow shown or not. Can be used if __inline = false__. |
 | __openSelectorOnInputClick__   | false | boolean | Open selector when the input field is clicked. Can be used if __inline = false and editableDateRangeField = false__. |
+| __ariaLabelInputField__   | Date range input field | string | Aria label text of input field. |
+| __ariaLabelClearDateRange__   | Clear date range | string | Aria label text of clear date range button. |
+| __ariaLabelOpenCalendar__   | Open Calendar | string | Aria label text of open calendar button. |
+| __ariaLabelPrevMonth__   | Previous Month | string | Aria label text of previous month button. |
+| __ariaLabelNextMonth__   | Next Month | string | Aria label text of next month button. |
+| __ariaLabelPrevYear__   | Previous Year | string | Aria label text of previous year button. |
+| __ariaLabelNextYear__   | Next Year | string | Aria label text of next year button. |
 
 * Example of the options data (not all properties listed):
 ```js
-    myDateRangePickerOptions: IMyOptions = {
+    myDateRangePickerOptions: IMyDrpOptions = {
         dateFormat: 'dd.mm.yyyy',
         firstDayOfWeek: 'mo',
         sunHighlight: true,
         height: '34px',
         width: '260px',
         inline: false,
-        selectionTxtFontSize: '15px',
         alignSelectorRight: false,
         indicateInvalidDateRange: true
     };
@@ -414,3 +426,8 @@ Online demo is [here](http://kekeh.github.io/mydaterangepicker)
 
 ## Author
 * Author: kekeh
+
+## Keywords
+* Date range picker
+* Angular2
+* Angular4

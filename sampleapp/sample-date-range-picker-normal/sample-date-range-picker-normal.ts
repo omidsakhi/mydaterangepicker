@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {IMyOptions, IMyDateRangeModel, IMyDateRange, IMyInputFieldChanged, IMyCalendarViewChanged, IMyDateSelected} from '../../src/my-date-range-picker/interfaces';
+import {IMyDrpOptions, IMyDateRangeModel, IMyDateRange, IMyInputFieldChanged, IMyCalendarViewChanged, IMyDateSelected} from '../../src/my-date-range-picker/interfaces';
 
 declare var require:any;
 const sampleDrpNormalTemplate: string = require('./sample-date-range-picker-normal.html');
@@ -11,14 +11,13 @@ const sampleDrpNormalTemplate: string = require('./sample-date-range-picker-norm
 
 export class SampleDateRangePickerNormal implements OnInit {
 
-    private myDateRangePickerOptionsNormal: IMyOptions = {
+    private myDateRangePickerOptionsNormal: IMyDrpOptions = {
         dateFormat: 'dd mmm yyyy',
         firstDayOfWeek: 'mo',
         sunHighlight: true,
         height: '34px',
         width: '250px',
         inline: false,
-        selectionTxtFontSize: '13px',
         alignSelectorRight: false,
         indicateInvalidDateRange: true,
         minYear: 1900,
@@ -27,13 +26,13 @@ export class SampleDateRangePickerNormal implements OnInit {
         showClearDateRangeBtn: true,
         showSelectorArrow: true,
         disableHeaderButtons: true,
-        disableUntil: {year: 2001, month: 11, day: 10},
-        disableSince: {year: 2030, month: 3, day: 10},
         showWeekNumbers: false,
         showClearBtn: true,
         showApplyBtn: true,
         showSelectDateText: true,
         openSelectorOnInputClick: false,
+        monthSelector: true,
+        yearSelector: true,
         disableDateRanges: [
             {beginDate: {year: 2016, month: 10, day: 5}, endDate: {year: 2016, month: 10, day: 7}},
             {beginDate: {year: 2016, month: 10, day: 10}, endDate: {year: 2016, month: 10, day: 12}}
@@ -124,6 +123,18 @@ export class SampleDateRangePickerNormal implements OnInit {
         this.myDateRangePickerOptionsNormal = copy;
     }
 
+    onMonthSelector(checked: boolean) {
+        let copy = this.getCopyOfOptions();
+        copy.monthSelector = checked;
+        this.myDateRangePickerOptionsNormal = copy;
+    }
+
+    onYearSelector(checked: boolean) {
+        let copy = this.getCopyOfOptions();
+        copy.yearSelector = checked;
+        this.myDateRangePickerOptionsNormal = copy;
+    }
+
     ngOnInit() {
         console.log('onInit(): SampleDateRangePickerNormal');
     }
@@ -154,7 +165,7 @@ export class SampleDateRangePickerNormal implements OnInit {
         console.log('onDateSelected(): Value: ', event);
     }
 
-    getCopyOfOptions(): IMyOptions {
+    getCopyOfOptions(): IMyDrpOptions {
         return JSON.parse(JSON.stringify(this.myDateRangePickerOptionsNormal));
     }
 }

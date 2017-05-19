@@ -17,13 +17,16 @@ export interface IMyOptions {
     markCurrentDay?: boolean;
     height?: string;
     width?: string;
+    selectorHeight?: string;
+    selectorWidth?: string;
     inline?: boolean;
     showClearDateRangeBtn?: boolean;
     selectionTxtFontSize?: string;
     alignSelectorRight?: boolean;
     indicateInvalidDateRange?: boolean;
     editableDateRangeField?: boolean;
-    editableMonthAndYear?: boolean;
+    monthSelector?: boolean;
+    yearSelector?: boolean;
     disableHeaderButtons?: boolean;
     showWeekNumbers?: boolean;
     minYear?: number;
@@ -31,8 +34,18 @@ export interface IMyOptions {
     disableUntil?: IMyDate;
     disableSince?: IMyDate;
     disableDates?: Array<IMyDate>;
+    enableDates?: Array<IMyDate>;
     disableDateRanges?: Array<IMyDateRange>;
     componentDisabled?: boolean;
     showSelectorArrow?: boolean;
     openSelectorOnInputClick?: boolean;
+    ariaLabelInputField?: string;
+    ariaLabelClearDateRange?: string;
+    ariaLabelOpenCalendar?: string;
+    ariaLabelPrevMonth?: string;
+    ariaLabelNextMonth?: string;
+    ariaLabelPrevYear?: string;
+    ariaLabelNextYear?: string;
 }
+
+export interface IMyDrpOptions extends IMyOptions {}

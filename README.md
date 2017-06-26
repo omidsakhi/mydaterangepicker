@@ -213,6 +213,8 @@ Value of the __options__ attribute is a type of [IMyDrpOptions](https://github.c
 | __firstDayOfWeek__   | mo | string | First day of week on calendar. One of the following: mo, tu, we, th, fr, sa, su |
 | __sunHighlight__   | true | boolean | Sunday red colored on calendar. |
 | __markCurrentDay__   | true | boolean | Is current day (today) marked on calendar. |
+| __markCurrentMonth__   | true | boolean | Is current month marked on calendar. Can be used if __monthSelector = true__. |
+| __markCurrentYear__   | true | boolean | Is current year marked on calendar. Can be used if __yearSelector = true__. |
 | __monthSelector__  | true | boolean | If month label is selected opens a selector of months. |
 | __yearSelector__  | true | boolean | If year label is selected opens a selector of years. |
 | __minYear__   | 1100 | number | Minimum allowed year in calendar. Cannot be less than 1100. |
@@ -270,15 +272,14 @@ Type of the __selDateRange__ attribute can be a string or an [IMyDateRange](http
 
 ### defaultMonth attribute
 
-If __selDateRange__ is not specified, when the daterangepicker is opened, it will
+If __selDateRange__ is not specified, when the calendar is opened, it will
 ordinarily default to selecting the current date. If you would prefer
 a different year and month to be the default for a freshly chosen date
-picking operation, specify a __[defaultMonth]__ attribute.
+picking operation, specify a __defaultMonth__ attribute.
 
-Value of the __[defaultMonth]__ attribute is a string which contain year number and
-month number separated by delimiter. The delimiter can be any special character.
-For example the value of the __[defaultMonth]__ attribute can be: __2016.08__,
-__08-2016__, __08/2016__.
+Value of the defaultMonth attribute can be:
+  * [IMyDefaultMonth](https://github.com/kekeh/mydaterangepicker/blob/master/src/my-date-range-picker/interfaces/my-default-month.interface.ts) object. The value of __defMonth__ property can be a string which contain year number and month number separated by delimiter. The delimiter can be any special character. For example: __08-2016__ or __08/2016__.
+  * a string which contain year number and month number separated by delimiter. The delimiter can be any special character. For example: __08-2016__ or __08/2016__.
 
 ### placeholder attribute
 

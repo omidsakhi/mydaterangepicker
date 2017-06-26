@@ -22,6 +22,7 @@ enum MonthId {prev = 1, curr = 2, next = 3}
 
 @Component({
     selector: "my-date-range-picker",
+    exportAs: "mydaterangepicker",
     styles: [myDrpStyles],
     template: myDrpTemplate,
     providers: [DateRangeUtilService, MYDRP_VALUE_ACCESSOR],
@@ -117,6 +118,8 @@ export class MyDateRangePicker implements OnChanges, ControlValueAccessor {
         firstDayOfWeek: <string> "mo",
         sunHighlight: <boolean> true,
         markCurrentDay: <boolean> true,
+        markCurrentMonth: <boolean> true,
+        markCurrentYear: <boolean> true,
         height: <string> "34px",
         width: <string> "262px",
         selectorHeight: <string> "232px",
@@ -172,13 +175,14 @@ export class MyDateRangePicker implements OnChanges, ControlValueAccessor {
         this.selectYear = false;
         this.cdr.detectChanges();
         if (this.selectMonth) {
+            let today: IMyDate = this.getToday();
             this.months.length = 0;
             for (let i = 1; i <= 12; i += 3) {
                 let row: Array<IMyCalendarMonth> = [];
                 for (let j = i; j < i + 3; j++) {
                     let disabled: boolean = this.drus.isMonthDisabledByDisableUntil({year: this.visibleMonth.year, month: j, day: this.daysInMonth(j, this.visibleMonth.year)}, this.opts.disableUntil)
                         || this.drus.isMonthDisabledByDisableSince({year: this.visibleMonth.year, month: j, day: 1}, this.opts.disableSince);
-                    row.push({nbr: j, name: this.opts.monthLabels[j], selected: j === this.visibleMonth.monthNbr, disabled: disabled});
+                    row.push({nbr: j, name: this.opts.monthLabels[j], currMonth: j === today.month && this.visibleMonth.year === today.year, selected: j === this.visibleMonth.monthNbr, disabled: disabled});
                 }
                 this.months.push(row);
             }
@@ -237,13 +241,14 @@ export class MyDateRangePicker implements OnChanges, ControlValueAccessor {
 
     generateYears(year: number): void {
         this.years.length = 0;
+        let today: IMyDate = this.getToday();
         for (let i = year; i <= 20 + year; i += 5) {
             let row: Array<IMyCalendarYear> = [];
             for (let j = i; j < i + 5; j++) {
                 let disabled: boolean = this.drus.isMonthDisabledByDisableUntil({year: j, month: this.visibleMonth.monthNbr, day: this.daysInMonth(this.visibleMonth.monthNbr, j)}, this.opts.disableUntil)
                     || this.drus.isMonthDisabledByDisableSince({year: j, month: this.visibleMonth.monthNbr, day: 1}, this.opts.disableSince);
                 let minMax: boolean = j < this.opts.minYear || j > this.opts.maxYear;
-                row.push({year: j, selected: j === this.visibleMonth.year, disabled: disabled || minMax});
+                row.push({year: j, currYear: j === today.year, selected: j === this.visibleMonth.year, disabled: disabled || minMax});
             }
             this.years.push(row);
         }
@@ -356,14 +361,19 @@ export class MyDateRangePicker implements OnChanges, ControlValueAccessor {
             this.parseOptions();
         }
 
+        let dmChange: boolean = false;
         if (changes.hasOwnProperty("defaultMonth")) {
-            let dm: string = changes["defaultMonth"].currentValue;
+            let dm: any = changes["defaultMonth"].currentValue;
+            if (typeof dm === "object") {
+                dm = dm.defMonth;
+            }
             if (dm !== null && dm !== undefined && dm !== "") {
                 this.selectedMonth = this.parseSelectedMonth(dm);
             }
             else {
                 this.selectedMonth = {monthTxt: "", monthNbr: 0, year: 0};
             }
+            dmChange = true;
         }
 
         if (changes.hasOwnProperty("selDateRange")) {
@@ -393,8 +403,12 @@ export class MyDateRangePicker implements OnChanges, ControlValueAccessor {
                 }
             }
         }
-        if (this.opts.inline) {
+        if (this.visibleMonth.year === 0 && this.visibleMonth.monthNbr === 0 || dmChange) {
             this.setVisibleMonth();
+        }
+        else {
+            this.visibleMonth.monthTxt = this.opts.monthLabels[this.visibleMonth.monthNbr];
+            this.generateCalendar(this.visibleMonth.monthNbr, this.visibleMonth.year, false);
         }
     }
 
@@ -713,8 +727,6 @@ export class MyDateRangePicker implements OnChanges, ControlValueAccessor {
         let dInThisM: number = this.daysInMonth(m, y);
         let dInPrevM: number = this.daysInPrevMonth(m, y);
 
-        this.setHeaderBtnDisabledState(m, y);
-
         let dayNbr: number = 1;
         let cmo: number = this.prevMonthId;
         for (let i = 1; i < 7; i++) {
@@ -725,14 +737,23 @@ export class MyDateRangePicker implements OnChanges, ControlValueAccessor {
                 // Previous month
                 for (let j = pm; j <= dInPrevM; j++) {
                     let date: IMyDate = {year: m === 1 ? y - 1 : y, month: m === 1 ? 12 : m - 1, day: j};
-                    week.push({dateObj: date, cmo: cmo, currDay: this.isCurrDay(j, m, y, cmo, today), dayNbr: this.getDayNumber(date), disabled: this.drus.isDisabledDay(date, this.opts.disableUntil, this.opts.disableSince, this.opts.disableDates, this.opts.disableDateRanges, this.opts.enableDates), range: false});
+                    week.push({dateObj: date,
+                        cmo: cmo, currDay: this.isCurrDay(j, m, y, cmo, today),
+                        dayNbr: this.getDayNumber(date),
+                        disabled: this.drus.isDisabledDay(date, this.opts.minYear, this.opts.maxYear, this.opts.disableUntil, this.opts.disableSince, this.opts.disableDates, this.opts.disableDateRanges, this.opts.enableDates),
+                        range: false});
                 }
                 cmo = this.currMonthId;
                 // Current month
                 let daysLeft: number = 7 - week.length;
                 for (let j = 0; j < daysLeft; j++) {
                     let date: IMyDate = {year: y, month: m, day: dayNbr};
-                    week.push({dateObj: date, cmo: cmo, currDay: this.isCurrDay(dayNbr, m, y, cmo, today), dayNbr: this.getDayNumber(date), disabled: this.drus.isDisabledDay(date, this.opts.disableUntil, this.opts.disableSince, this.opts.disableDates, this.opts.disableDateRanges, this.opts.enableDates), range: false});
+                    week.push({dateObj: date,
+                        cmo: cmo,
+                        currDay: this.isCurrDay(dayNbr, m, y, cmo, today),
+                        dayNbr: this.getDayNumber(date),
+                        disabled: this.drus.isDisabledDay(date, this.opts.minYear, this.opts.maxYear, this.opts.disableUntil, this.opts.disableSince, this.opts.disableDates, this.opts.disableDateRanges, this.opts.enableDates),
+                        range: false});
                     dayNbr++;
                 }
             }
@@ -743,22 +764,23 @@ export class MyDateRangePicker implements OnChanges, ControlValueAccessor {
                         // Next month
                         dayNbr = 1;
                         cmo = this.nextMonthId;
-                        if (m === 12) {
-                            y++;
-                            m = 1;
-                        }
-                        else {
-                            m++;
-                        }
                     }
-                    let date: IMyDate = {year: y, month: m, day: dayNbr};
-                    week.push({dateObj: date, cmo: cmo, currDay: this.isCurrDay(dayNbr, m, y, cmo, today), dayNbr: this.getDayNumber(date), disabled: this.drus.isDisabledDay(date, this.opts.disableUntil, this.opts.disableSince, this.opts.disableDates, this.opts.disableDateRanges, this.opts.enableDates), range: false});
+                    let date: IMyDate = {year: cmo === this.nextMonthId && m === 12 ? y + 1 : y, month: cmo === this.currMonthId ? m : cmo === this.nextMonthId && m < 12 ? m + 1 : 1, day: dayNbr};
+                    week.push({dateObj: date,
+                        cmo: cmo,
+                        currDay: this.isCurrDay(dayNbr, m, y, cmo, today),
+                        dayNbr: this.getDayNumber(date),
+                        disabled: this.drus.isDisabledDay(date, this.opts.minYear, this.opts.maxYear, this.opts.disableUntil, this.opts.disableSince, this.opts.disableDates, this.opts.disableDateRanges, this.opts.enableDates),
+                        range: false});
                     dayNbr++;
                 }
             }
             let weekNbr: number = this.opts.showWeekNumbers  && this.opts.firstDayOfWeek === "mo" ? this.drus.getWeekNumber(week[0].dateObj) : 0;
             this.dates.push({week: week, weekNbr: weekNbr});
         }
+
+        this.setHeaderBtnDisabledState(m, y);
+
         if (viewChange) {
             // Notify parent
             this.calendarViewChanged.emit({year: y, month: m, first: {number: 1, weekday: this.getWeekday({year: y, month: m, day: 1})}, last: {number: dInThisM, weekday: this.getWeekday({year: y, month: m, day: dInThisM})}});
